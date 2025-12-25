@@ -14,8 +14,8 @@ class Settings(BaseSettings):
     DATA_DIR: Optional[Path] = Field(default=None, description="Path to raw images directory")
     CSV_FILE: Optional[Path] = Field(default=None, description="Path to metadata.csv")
     MODELS_DIR: Optional[Path] = Field(default=None)
-    WEIGHTS_NAME: str = "baseline_tagged_30_2.pth"
-    CLASSES_NAME: str = "classes_30_2.json"
+    WEIGHTS_NAME: str = "baseline_tagged_30_3.pth"
+    CLASSES_NAME: str = "classes_30_3.json"
 
     # Training Hyperparameters
     BATCH_SIZE: int = 32
@@ -24,12 +24,12 @@ class Settings(BaseSettings):
     WEIGHT_DECAY: float = 1e-4
 
     # Dataset Configuration
-    TOP_K: int = 30
+    TOP_K: int = 60
     FILTER_TO_TOP: bool = True
     MAX_SAMPLES: Optional[int] = 100_000
 
     # Hardware
-    NUM_WORKERS: int = 4
+    NUM_WORKERS: int = -1
 
     # Post-Init Logic
     def model_post_init(self, __context):
