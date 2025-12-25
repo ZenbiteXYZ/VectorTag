@@ -41,7 +41,10 @@ def main():
 
     # 3. Loss and Optimizer
     criterion = nn.BCEWithLogitsLoss()
-    optimizer = optim.Adam(model.parameters(), lr=settings.LEARNING_RATE)
+    optimizer = optim.Adam(model.parameters(), lr=settings.LEARNING_RATE, weight_decay=settings.WEIGHT_DECAY)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer=optimizer, mode='min', factor=0.1, patience=2
+    )
 
     best_val_loss = float('inf')
     weights_save_path = os.path.join(settings.MODELS_DIR, settings.WEIGHTS_NAME)
@@ -84,8 +87,13 @@ def main():
                 val_loss += loss.item()
 
         val_loss /= len(val_loader)
-        print(f"Epoch [{epoch+1}/{settings.EPOCHS}] Train Loss: {epoch_loss:.4f} | Val Loss: {val_loss:.4f}")
+        current_lr = optimizer.param_groups[0]['lr']
+        print(f"Epoch [{epoch+1}/{settings.EPOCHS}] Train Loss: {epoch_loss:.4f} | Val Loss: {val_loss:.4f} | LR: {current_lr:.2e}")
 
+        # Scheduler step
+        scheduler.step(val_loss)
+
+        # Early stopping
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             torch.save(model.state_dict(), weights_save_path)
