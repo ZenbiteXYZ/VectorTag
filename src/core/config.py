@@ -13,9 +13,11 @@ class Settings(BaseSettings):
 
     DATA_DIR: Optional[Path] = Field(default=None, description="Path to raw images directory")
     CSV_FILE: Optional[Path] = Field(default=None, description="Path to metadata.csv")
-    MODELS_DIR: Optional[Path] = Field(default=None)
-    WEIGHTS_NAME: str = "baseline_tagged_30_3.pth"
-    CLASSES_NAME: str = "classes_30_3.json"
+    MODELS_ROOT: Optional[Path] = Field(default=None)
+    STANDARD_WEIGHTS_DIR: Optional[Path] = Field(default=None)
+    STANDARD_CLASSES_DIR: Optional[Path] = Field(default=None)
+
+    DEFAULT_STANDARD_MODEL: str = "baseline_v3"
 
     # Training Hyperparameters
     BATCH_SIZE: int = 32
@@ -33,25 +35,33 @@ class Settings(BaseSettings):
 
     # Post-Init Logic
     def model_post_init(self, __context):
+        # Data paths
         if self.DATA_DIR is None:
             self.DATA_DIR = self.PROJECT_ROOT / "data" / "raw" / "various_tagged_images"
-
         if self.CSV_FILE is None:
             self.CSV_FILE = self.DATA_DIR / "metadata.csv"
 
-        if self.MODELS_DIR is None:
-            self.MODELS_DIR = self.PROJECT_ROOT / "models" / "weights"
+        # Models root
+        if self.MODELS_ROOT is None:
+            self.MODELS_ROOT = self.PROJECT_ROOT / "models"
 
-        # Create dirs
-        self.MODELS_DIR.mkdir(parents=True, exist_ok=True)
+        # Standard model paths
+        if self.STANDARD_WEIGHTS_DIR is None:
+            self.STANDARD_WEIGHTS_DIR = self.MODELS_ROOT / "standard" / "weights"
+        if self.STANDARD_CLASSES_DIR is None:
+            self.STANDARD_CLASSES_DIR = self.MODELS_ROOT / "standard" / "classes"
+
+        # Create directories
+        self.STANDARD_WEIGHTS_DIR.mkdir(parents=True, exist_ok=True)
+        self.STANDARD_CLASSES_DIR.mkdir(parents=True, exist_ok=True)
 
     @computed_field
-    def WEIGHTS_PATH(self) -> Path:
-        return self.MODELS_DIR / self.WEIGHTS_NAME
+    def DEFAULT_WEIGHTS_PATH(self) -> Path:
+        return self.STANDARD_WEIGHTS_DIR / f"{self.DEFAULT_STANDARD_MODEL}.pth"
 
     @computed_field
-    def CLASSES_PATH(self) -> Path:
-        return self.MODELS_DIR / self.CLASSES_NAME
+    def DEFAULT_CLASSES_PATH(self) -> Path:
+        return self.STANDARD_CLASSES_DIR / f"{self.DEFAULT_STANDARD_MODEL}.json"
 
     @property
     def DEVICE(self) -> torch.device:
