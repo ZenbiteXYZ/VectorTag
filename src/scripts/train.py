@@ -45,6 +45,7 @@ def main():
 
     best_val_loss = float('inf')
     weights_save_path = os.path.join(settings.MODELS_DIR, settings.WEIGHTS_NAME)
+    classes_save_path = os.path.join(settings.MODELS_DIR, settings.CLASSES_NAME)
 
     print("Starting training...")
     for epoch in range(settings.EPOCHS):
@@ -90,7 +91,7 @@ def main():
             torch.save(model.state_dict(), weights_save_path)
 
     # Save classes
-    with open(os.path.join(settings.SAVE_PATH, settings.CLASSES_NAME), "w") as f:
+    with open(classes_save_path, "w") as f:
         json.dump(classes, f)
 
 if __name__ == "__main__":
