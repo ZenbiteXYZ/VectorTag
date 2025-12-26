@@ -47,8 +47,8 @@ def main():
     )
 
     best_val_loss = float('inf')
-    weights_save_path = os.path.join(settings.MODELS_DIR, settings.WEIGHTS_NAME)
-    classes_save_path = os.path.join(settings.MODELS_DIR, settings.CLASSES_NAME)
+    weights_save_path = os.path.join(settings.STANDARD_WEIGHTS_DIR, f"{settings.DEFAULT_STANDARD_MODEL}.pth")
+    classes_save_path = os.path.join(settings.STANDARD_CLASSES_DIR, f"{settings.DEFAULT_STANDARD_MODEL}.json")
 
     print("Starting training...")
     for epoch in range(settings.EPOCHS):
