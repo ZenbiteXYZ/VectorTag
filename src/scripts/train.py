@@ -33,7 +33,8 @@ def main():
         top_k=settings.TOP_K,
         filter_to_top=settings.FILTER_TO_TOP,
         max_samples=settings.MAX_SAMPLES,
-        num_workers=4
+        num_workers=4,
+        stratify=True
     )
 
     # 2. Initialize Model
