@@ -14,6 +14,7 @@ sys.path.append(project_root)
 from src.core.config import settings
 from src.models.baseline import BaselineModel
 from src.data.loaders import get_dataloaders
+from src.utils.plotting import plot_training_history
 
 
 def main():
@@ -50,6 +51,9 @@ def main():
     best_val_loss = float('inf')
     weights_save_path = os.path.join(settings.STANDARD_WEIGHTS_DIR, f"{settings.DEFAULT_STANDARD_MODEL}.pth")
     classes_save_path = os.path.join(settings.STANDARD_CLASSES_DIR, f"{settings.DEFAULT_STANDARD_MODEL}.json")
+
+    # Initialize history
+    history = {'epochs': [], 'train_loss': [], 'val_loss': []}
 
     print("Starting training...")
     for epoch in range(settings.EPOCHS):
@@ -91,6 +95,11 @@ def main():
         current_lr = optimizer.param_groups[0]['lr']
         print(f"Epoch [{epoch+1}/{settings.EPOCHS}] Train Loss: {epoch_loss:.4f} | Val Loss: {val_loss:.4f} | LR: {current_lr:.2e}")
 
+        # Update history
+        history['epochs'].append(epoch + 1)
+        history['train_loss'].append(epoch_loss)
+        history['val_loss'].append(val_loss)
+
         # Scheduler step
         scheduler.step(val_loss)
 
@@ -98,10 +107,17 @@ def main():
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             torch.save(model.state_dict(), weights_save_path)
+            with open(classes_save_path, "w") as f:
+                json.dump(classes, f, indent=2)
+            print(f"  >>> New best model saved! (Loss: {val_loss:.4f})")
 
     # Save classes
     with open(classes_save_path, "w") as f:
         json.dump(classes, f)
+
+    # Plot results
+    assets_dir = os.path.join(project_root, "assets")
+    plot_training_history(history, settings.DEFAULT_STANDARD_MODEL, save_dir=assets_dir)
 
 if __name__ == "__main__":
     main()
