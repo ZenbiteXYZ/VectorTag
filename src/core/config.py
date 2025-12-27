@@ -17,21 +17,21 @@ class Settings(BaseSettings):
     STANDARD_WEIGHTS_DIR: Optional[Path] = Field(default=None)
     STANDARD_CLASSES_DIR: Optional[Path] = Field(default=None)
 
-    DEFAULT_STANDARD_MODEL: str = "baseline_v3"
+    DEFAULT_STANDARD_MODEL: str = "baseline_v5"
 
     # Training Hyperparameters
     BATCH_SIZE: int = 32
     LEARNING_RATE: float = 1e-4
-    EPOCHS: int = 8
-    WEIGHT_DECAY: float = 1e-4
+    EPOCHS: int = 12
+    WEIGHT_DECAY: float = 1e-5
 
     # Dataset Configuration
-    TOP_K: int = 60
+    TOP_K: int = 150
     FILTER_TO_TOP: bool = True
-    MAX_SAMPLES: Optional[int] = 100_000
+    MAX_SAMPLES: Optional[int] = 200_000
 
     # Hardware
-    NUM_WORKERS: int = -1
+    NUM_WORKERS: int = 8
 
     # Post-Init Logic
     def model_post_init(self, __context):
