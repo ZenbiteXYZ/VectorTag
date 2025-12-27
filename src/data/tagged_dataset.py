@@ -63,7 +63,15 @@ class TaggedImagesDataset(Dataset):
             print(f"Subsampled dataset to {len(self.df)} samples.")
 
         self.class_to_idx = {cls: i for i, cls in enumerate(self.classes)}
-        print(f"Found {len(self.classes)} unique classes.")
+
+        # Compute class counts for weighting
+        self.pos_counts = self._compute_pos_counts()
+
+    def _compute_pos_counts(self):
+        counts = Counter()
+        for tags in self.df['parsed_tags']:
+            counts.update(tags)
+        return torch.tensor([counts[cls] for cls in self.classes], dtype=torch.float32)
 
     def _smart_subsample(self, df: pd.DataFrame, n_samples: int, target_classes: Set[str]) -> pd.DataFrame:
         """
