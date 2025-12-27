@@ -89,7 +89,7 @@ def get_dataloaders(
         transform=train_transform,
         classes=classes,
         filter_to_top=filter_to_top,
-        max_samples=None,
+        max_samples=max_samples,
     )
     train_dataset = Subset(train_dataset_augmented, train_indices)
 
@@ -100,7 +100,7 @@ def get_dataloaders(
         transform=val_transform,
         classes=classes,
         filter_to_top=filter_to_top,
-        max_samples=None,
+        max_samples=max_samples,
     )
     val_dataset = Subset(val_dataset_clean, val_indices)
 
