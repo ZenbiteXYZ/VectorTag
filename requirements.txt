@@ -2,3 +2,8 @@ torch
 torchvision
 pillow
 pandas
+pydantic
+pydantic-settings
+tqdm
+streamlit
+scikit-learn
