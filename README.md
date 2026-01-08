@@ -13,13 +13,13 @@ A deep learning system for image tags generation. Uses ResNET-18 backbone.
 
 ### Key Features
 
-✅ **ResNet-18** backbone pretrained on ImageNet
-✅ **BCEWithLogitsLoss** with class weighting to handle imbalanced datasets
-✅ **Grad-CAM visualization** for model interpretability
-✅ **Data augmentation** (rotation, flips, color jitter)
-✅ **LR Scheduler** with early stopping to prevent overfitting
-✅ **Streamlit UI** for interactive inference
-✅ **Docker deployment** ready
+- **ResNet-18** backbone pretrained on ImageNet
+- **BCEWithLogitsLoss** with class weighting to handle imbalanced datasets
+- **Grad-CAM visualization** for model interpretability
+- **Data augmentation** (rotation, flips, color jitter)
+- **LR Scheduler** with early stopping to prevent overfitting
+- **Streamlit UI** for interactive inference
+- **Docker deployment** ready
 
 ---
 
