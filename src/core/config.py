@@ -57,7 +57,7 @@ class Settings(BaseSettings):
 
     @computed_field
     def DEFAULT_WEIGHTS_PATH(self) -> Path:
-        return self.STANDARD_WEIGHTS_DIR / f"{self.DEFAULT_STANDARD_MODEL}.pth"
+        return self.STANDARD_WEIGHTS_DIR / f"{self.DEFAULT_STANDARD_MODEL}.safetensors"
 
     @computed_field
     def DEFAULT_CLASSES_PATH(self) -> Path:

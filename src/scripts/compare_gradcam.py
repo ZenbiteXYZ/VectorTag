@@ -4,6 +4,7 @@ import json
 import torch
 import matplotlib.pyplot as plt
 from PIL import Image
+from safetensors.torch import load_file
 
 # Setup paths
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -20,16 +21,16 @@ TEST_IMAGE_PATH = "/home/zenbitex/Pictures/raspberry.jpg"
 TARGET_TAG = "food"
 
 MODELS_TO_COMPARE = {
-    "Exp 002 (BCE)": "baseline_v2.pth",
-    "Exp 004 (Focal)": "baseline_v4.pth",
-    "Exp 005: (BCE + pos_weight)": "baseline_v5.pth"
+    "Exp 002 (BCE)": "baseline_v2.safetensors",
+    "Exp 004 (Focal)": "baseline_v4.safetensors",
+    "Exp 005: (BCE + pos_weight)": "baseline_v5.safetensors"
     }
 # ---------------------
 
 def load_model_and_classes(weights_filename):
     """Loads model and its specific classes.json"""
     weights_path = settings.STANDARD_WEIGHTS_DIR / weights_filename
-    classes_filename = weights_filename.replace(".pth", ".json")
+    classes_filename = weights_filename.replace(".safetensors", ".json")
     classes_path = settings.STANDARD_CLASSES_DIR / classes_filename
 
     if not weights_path.exists() or not classes_path.exists():
@@ -40,7 +41,7 @@ def load_model_and_classes(weights_filename):
         classes = json.load(f)
 
     model = BaselineModel(num_classes=len(classes))
-    state_dict = torch.load(weights_path, map_location=settings.DEVICE, weights_only=True)
+    state_dict = load_file(weights_path, device=str(settings.DEVICE))
     model.load_state_dict(state_dict)
     model.to(settings.DEVICE)
     model.eval()

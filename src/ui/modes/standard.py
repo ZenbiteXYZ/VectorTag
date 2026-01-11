@@ -4,6 +4,7 @@ from PIL import Image
 from pathlib import Path
 from torch import nn
 from torchvision import transforms
+from safetensors.torch import load_file
 from typing import List, Tuple, Dict, Optional
 
 from src.core.config import settings
@@ -35,8 +36,8 @@ class StandardMode(InferenceMode):
         if not weights_dir.exists():
             return {}
 
-        for pth_file in sorted(weights_dir.glob("baseline_v*.pth")):
-            model_name = pth_file.stem
+        for weights_file in sorted(weights_dir.glob("baseline_v*.safetensors")):
+            model_name = weights_file.stem
             classes_file = classes_dir / f"{model_name}.json"
 
             if classes_file.exists():
@@ -48,7 +49,7 @@ class StandardMode(InferenceMode):
 
     def set_model(self, model_key: str):
         """Sets the active model by its key."""
-        weights_path = settings.STANDARD_WEIGHTS_DIR / f"{model_key}.pth"
+        weights_path = settings.STANDARD_WEIGHTS_DIR / f"{model_key}.safetensors"
         classes_path = settings.STANDARD_CLASSES_DIR / f"{model_key}.json"
 
         if not weights_path.exists():
@@ -70,7 +71,7 @@ class StandardMode(InferenceMode):
             self.classes = json.load(f)
 
         self.model = BaselineModel(num_classes=len(self.classes))
-        state_dict = torch.load(weights_path, map_location=settings.DEVICE, weights_only=True)
+        state_dict = load_file(weights_path, device=str(settings.DEVICE))
         self.model.load_state_dict(state_dict)
         self.model.to(settings.DEVICE)
         self.model.eval()

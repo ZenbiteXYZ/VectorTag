@@ -7,6 +7,7 @@ from typing import Tuple, List
 from torch import nn
 from PIL import Image
 from torchvision import transforms
+from safetensors.torch import load_file
 
 # Ensure src is in path
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -19,10 +20,10 @@ from src.models.baseline import BaselineModel
 
 def load_model_and_classes():
     # 1. Load Classes
-    if not os.path.exists(settings.CLASSES_PATH):
-        raise FileNotFoundError(f"Classes file not found: {settings.CLASSES_PATH}")
+    if not os.path.exists(settings.DEFAULT_CLASSES_PATH):
+        raise FileNotFoundError(f"Classes file not found: {settings.DEFAULT_CLASSES_PATH}")
 
-    with open(settings.CLASSES_PATH, "r") as f:
+    with open(settings.DEFAULT_CLASSES_PATH, "r") as f:
         classes = json.load(f)
 
     print(f"Loaded {len(classes)} classes.")
@@ -31,11 +32,11 @@ def load_model_and_classes():
     model = BaselineModel(num_classes=len(classes))
 
     # 3. Load Weights
-    if not os.path.exists(settings.WEIGHTS_PATH):
-        raise FileNotFoundError(f"Weights file not found: {settings.WEIGHTS_PATH}")
+    if not os.path.exists(settings.DEFAULT_WEIGHTS_PATH):
+        raise FileNotFoundError(f"Weights file not found: {settings.DEFAULT_WEIGHTS_PATH}")
 
-    # map_location ensures it loads on CPU if CUDA is not available
-    state_dict = torch.load(settings.WEIGHTS_PATH, map_location=settings.DEVICE, weights_only=True)
+    # load from safetensors
+    state_dict = load_file(settings.DEFAULT_WEIGHTS_PATH, device=str(settings.DEVICE))
     model.load_state_dict(state_dict)
     model.to(settings.DEVICE)
     model.eval()

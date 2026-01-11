@@ -1,5 +1,6 @@
 torch
 torchvision
+safetensors
 pillow
 pandas
 pydantic

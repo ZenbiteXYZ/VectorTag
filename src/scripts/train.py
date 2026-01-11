@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
+from safetensors.torch import save_file
 
 # Ensure src is in path
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -49,7 +50,7 @@ def main():
     )
 
     best_val_loss = float('inf')
-    weights_save_path = os.path.join(settings.STANDARD_WEIGHTS_DIR, f"{settings.DEFAULT_STANDARD_MODEL}.pth")
+    weights_save_path = os.path.join(settings.STANDARD_WEIGHTS_DIR, f"{settings.DEFAULT_STANDARD_MODEL}.safetensors")
     classes_save_path = os.path.join(settings.STANDARD_CLASSES_DIR, f"{settings.DEFAULT_STANDARD_MODEL}.json")
 
     # Initialize history
@@ -106,7 +107,9 @@ def main():
         # Early stopping
         if val_loss < best_val_loss:
             best_val_loss = val_loss
-            torch.save(model.state_dict(), weights_save_path)
+            # Move state_dict to CPU for safetensors saving
+            state_dict = {k: v.cpu() for k, v in model.state_dict().items()}
+            save_file(state_dict, weights_save_path)
             with open(classes_save_path, "w") as f:
                 json.dump(classes, f, indent=2)
             print(f"  >>> New best model saved! (Loss: {val_loss:.4f})")

@@ -49,7 +49,7 @@ VectorTag/
 │       └── plotting.py               # Training visualization
 ├── models/
 │   └── standard/
-│       ├── weights/                  # Saved model weights (.pth)
+│       ├── weights/                  # Saved model weights (.safetensors)
 │       └── classes/                  # Class definitions (.json)
 ├── assets/
 │   ├── exp_00X_*.png                 # Training curves from experiments
